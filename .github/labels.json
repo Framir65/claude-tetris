@@ -1,0 +1,22 @@
+[
+  { "name": "refactor", "color": "1d76db", "description": "Mejora interna de código sin cambiar comportamiento visible" },
+  { "name": "performance", "color": "fbca04", "description": "Rendimiento o fluidez del juego" },
+
+  { "name": "area:gameplay", "color": "0e8a16", "description": "Movimiento, rotación, colisión, wall kicks, lock de piezas" },
+  { "name": "area:render", "color": "0e8a16", "description": "Dibujado en canvas, ghost piece, colores de piezas" },
+  { "name": "area:ui", "color": "0e8a16", "description": "HTML/CSS, overlay, marcador, elementos fuera del canvas" },
+  { "name": "area:scoring", "color": "0e8a16", "description": "Puntuación, niveles y velocidad de caída" },
+  { "name": "area:input", "color": "0e8a16", "description": "Teclado y controles" },
+  { "name": "area:infra", "color": "0e8a16", "description": "README, CLAUDE.md, workflows y herramientas del repo" },
+
+  { "name": "priority:high", "color": "b60205", "description": "Bloquea o rompe el juego para la mayoría de usuarios" },
+  { "name": "priority:medium", "color": "d93f0b", "description": "Afecta la experiencia pero tiene contorno" },
+  { "name": "priority:low", "color": "c2e0c6", "description": "Cosmético o de bajo impacto" },
+
+  { "name": "complexity:trivial", "color": "c5def5", "description": "Cambio de una línea o constante" },
+  { "name": "complexity:small", "color": "c5def5", "description": "Cambio acotado a una función o fichero" },
+  { "name": "complexity:medium", "color": "c5def5", "description": "Toca varias funciones o requiere cuidado con el estado del juego" },
+  { "name": "complexity:large", "color": "c5def5", "description": "Rediseño de un subsistema (loop, colisión, render)" },
+
+  { "name": "needs-info", "color": "e4e669", "description": "Falta información para diagnosticar el issue" }
+]
