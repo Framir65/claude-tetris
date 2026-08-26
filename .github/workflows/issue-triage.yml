@@ -85,7 +85,14 @@ jobs:
             ## Paso 4 — Publicar diagnóstico y plan
 
             Redacta un comentario en español con exactamente esta
-            estructura Markdown:
+            estructura Markdown. El comentario debe estar en Markdown
+            válido que GitHub pueda renderizar correctamente (encabezados
+            `##`, listas con `-`, bloques de código con triple backtick
+            indicando el lenguaje cuando cites código, negrita con `**`,
+            etc.) — no uses formato que GitHub no interprete (por ejemplo,
+            no anides Markdown dentro de un bloque de código salvo que
+            sea código real, y no dejes HTML crudo salvo el comentario
+            `<!-- claude-triage -->` del marcador):
 
             ```
             <!-- claude-triage -->
