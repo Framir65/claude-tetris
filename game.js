@@ -3,6 +3,7 @@
 const COLS = 10;
 const ROWS = 20;
 const BLOCK = 30;
+const NUT = 8;
 
 const COLORS = [
   null,
@@ -13,6 +14,7 @@ const COLORS = [
   '#e57373', // Z - red
   '#90caf9', // J - pale blue
   '#ffb74d', // L - orange
+  '#b0bec5', // Tuerca - acero
 ];
 
 const PIECES = [
@@ -24,6 +26,7 @@ const PIECES = [
   [[5,5,0],[0,5,5],[0,0,0]],                  // Z
   [[6,0,0],[6,6,6],[0,0,0]],                  // J
   [[0,0,7],[7,7,7],[0,0,0]],                  // L
+  [[8,8,8],[8,0,8],[8,8,8]],                  // Tuerca (reto): anillo con agujero central
 ];
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
@@ -52,7 +55,7 @@ function createBoard() {
 }
 
 function randomPiece() {
-  const type = Math.floor(Math.random() * 7) + 1;
+  const type = Math.floor(Math.random() * 8) + 1;
   const shape = PIECES[type].map(row => [...row]);
   return { type, shape, x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2), y: 0 };
 }
@@ -100,8 +103,10 @@ function merge() {
 
 function clearLines() {
   let cleared = 0;
+  let nutRows = 0;
   for (let r = ROWS - 1; r >= 0; r--) {
     if (board[r].every(v => v !== 0)) {
+      if (board[r].includes(NUT)) nutRows++;
       board.splice(r, 1);
       board.unshift(new Array(COLS).fill(0));
       cleared++;
@@ -110,7 +115,7 @@ function clearLines() {
   }
   if (cleared) {
     lines += cleared;
-    score += (LINE_SCORES[cleared] || 0) * level;
+    score += (LINE_SCORES[cleared] || 0) * level * (nutRows ? 2 : 1);
     level = Math.floor(lines / 10) + 1;
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
@@ -173,6 +178,15 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   context.globalAlpha = 1;
 }
 
+// Dibuja toda una matriz de piezas (tablero o pieza). El agujero de la
+// Tuerca ya es cuadrado por sí solo: su celda central vale 0 y drawBlock
+// se salta las celdas vacías.
+function drawMatrix(context, matrix, ox, oy, size, alpha) {
+  for (let r = 0; r < matrix.length; r++)
+    for (let c = 0; c < matrix[r].length; c++)
+      drawBlock(context, ox + c, oy + r, matrix[r][c], size, alpha);
+}
+
 function drawGrid() {
   ctx.strokeStyle = isLight ? GRID_COLORS.light : GRID_COLORS.dark;
   ctx.lineWidth = 0.5;
@@ -195,21 +209,14 @@ function draw() {
   drawGrid();
 
   // board
-  for (let r = 0; r < ROWS; r++)
-    for (let c = 0; c < COLS; c++)
-      drawBlock(ctx, c, r, board[r][c], BLOCK);
+  drawMatrix(ctx, board, 0, 0, BLOCK);
 
   // ghost
   const gy = ghostY();
-  for (let r = 0; r < current.shape.length; r++)
-    for (let c = 0; c < current.shape[r].length; c++)
-      if (current.shape[r][c])
-        drawBlock(ctx, current.x + c, gy + r, current.shape[r][c], BLOCK, 0.2);
+  drawMatrix(ctx, current.shape, current.x, gy, BLOCK, 0.2);
 
   // current piece
-  for (let r = 0; r < current.shape.length; r++)
-    for (let c = 0; c < current.shape[r].length; c++)
-      drawBlock(ctx, current.x + c, current.y + r, current.shape[r][c], BLOCK);
+  drawMatrix(ctx, current.shape, current.x, current.y, BLOCK);
 }
 
 function drawNext() {
@@ -218,9 +225,7 @@ function drawNext() {
   const shape = next.shape;
   const offX = Math.floor((4 - shape[0].length) / 2);
   const offY = Math.floor((4 - shape.length) / 2);
-  for (let r = 0; r < shape.length; r++)
-    for (let c = 0; c < shape[r].length; c++)
-      drawBlock(nextCtx, offX + c, offY + r, shape[r][c], NB);
+  drawMatrix(nextCtx, shape, offX, offY, NB);
 }
 
 function endGame() {
